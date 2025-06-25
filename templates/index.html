@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ✅ This fixes the warning -->
+  <title>Sign Language Detector</title>
+  <script defer src="/static/script.js"></script>
+</head>
+<body>
+  <h1>Sign Language Live Detector</h1>
+  <video id="video" width="400" height="300" autoplay></video>
+  <button onclick="captureFrame()">Predict</button>
+  <p id="result"></p>
+  <canvas id="canvas" style="display:none;"></canvas>
+</body>
+</html>
