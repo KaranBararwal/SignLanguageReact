@@ -46,9 +46,9 @@ def health_check():
     return jsonify({"status": "API is running"})
 
 
-@app.route("/predict", methods=["GET"])
-def health_check():
-    return jsonify({"status": "Predict is running"})
+# @app.route("/predict", methods=["GET"])
+# def health_check():
+#     return jsonify({"status": "Predict is running"})
 
 
 @app.route("/predict", methods=["POST"])
