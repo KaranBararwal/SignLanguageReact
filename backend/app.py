@@ -49,8 +49,7 @@ def health_check():
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        start = time.time()
-
+        start = time.time()  # Add this
         data = request.json.get("image")
         if not data:
             return jsonify({"error": "No image data provided"}), 400
@@ -64,12 +63,12 @@ def predict():
             return jsonify({"error": "Failed to decode image"}), 400
 
         label = predict_sign(frame)
-        
-        print("Prediction took", time.time() - start, "seconds")
+        print("Prediction took", time.time() - start, "seconds")  # Add this
         return jsonify({"prediction": label})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 # Render uses its own port via $PORT
 if __name__ == "__main__":
