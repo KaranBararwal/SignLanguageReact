@@ -8,7 +8,7 @@ import os
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app, origins=["https://signlanguagereactfrontend.onrender.com"])   # Enable CORS for all routes
 
 # Load model
 MODEL_PATH = "asl_model.keras"
