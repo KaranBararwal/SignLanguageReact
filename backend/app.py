@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import cv2
@@ -5,10 +6,13 @@ import numpy as np
 import base64
 import tensorflow as tf
 import os
+    
+load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app, origins=["https://signlanguagereactfrontend.onrender.com"])
+# CORS(app, origins=["https://signlanguagereactfrontend.onrender.com"])
+CORS(app, origins=[os.getenv("ALLOWED_ORIGIN")])
 
 # Load model
 MODEL_PATH = "asl_model.keras"
