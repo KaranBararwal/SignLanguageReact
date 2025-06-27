@@ -6,33 +6,36 @@ import numpy as np
 import base64
 import tensorflow as tf
 import os
-    
+
+# Load environment variables
 load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
-# CORS(app, origins=["https://signlanguagereactfrontend.onrender.com"])
-CORS(app, origins=[os.getenv("ALLOWED_ORIGIN")])
+
+# Get allowed frontend origin from environment (set this on Render as ALLOWED_ORIGIN)
+allowed_origin = os.getenv("ALLOWED_ORIGIN")
+print(f"Allowing CORS from: {allowed_origin}")
+CORS(app, origins=[allowed_origin])
 
 # Load model
 MODEL_PATH = "asl_model.keras"
 if os.path.exists(MODEL_PATH):
-    print(f"Loading model from {MODEL_PATH}")
-if not os.path.exists(MODEL_PATH):
-    raise FileNotFoundError(f"Model file not found at path: {MODEL_PATH}")
+    print(f"✅ Loading model from {MODEL_PATH}")
+else:
+    raise FileNotFoundError(f"❌ Model file not found at path: {MODEL_PATH}")
+
 model = tf.keras.models.load_model(MODEL_PATH)
 
-# Map labels A-Z excluding 'J' (because J requires motion)
-labels_map = [chr(i) for i in range(65, 91) if i != 74]  # A-Z excluding 'J'
+# Map labels A-Z excluding 'J'
+labels_map = [chr(i) for i in range(65, 91) if i != 74]
 
 def predict_sign(img_array):
-    # Convert to grayscale, resize, normalize, and reshape
     gray = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
     resized = cv2.resize(gray, (28, 28))
     norm = resized / 255.0
     reshaped = norm.reshape(1, 28, 28, 1)
-    
-    # Predict
+
     prediction = model.predict(reshaped)
     predicted_label = labels_map[np.argmax(prediction)]
     return predicted_label
@@ -62,7 +65,7 @@ def predict():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# if __name__ == "__main__":
-#     app.run(debug=True)
+# Render uses its own port via $PORT
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)  # Change port to 5000 for compatibility with frontend
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
