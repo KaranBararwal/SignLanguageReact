@@ -46,12 +46,25 @@ def health_check():
     return jsonify({"status": "API is running"})
 
 
+@app.route("/predict", methods=["GET"])
+def health_check():
+    return jsonify({"status": "Predict is running"})
+
+
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        start = time.time()  # Add this
+        print("📥 Received /predict request")
+        start = time.time()
+
+        # Log memory usage before processing
+        process = psutil.Process(os.getpid())
+        mem_before = process.memory_info().rss / 1024**2
+        print(f"🧠 Memory before processing: {mem_before:.2f} MB")
+
         data = request.json.get("image")
         if not data:
+            print("⚠️ No image data provided")
             return jsonify({"error": "No image data provided"}), 400
 
         header, encoded = data.split(",", 1)
@@ -60,15 +73,24 @@ def predict():
         frame = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
 
         if frame is None:
+            print("❌ Failed to decode image")
             return jsonify({"error": "Failed to decode image"}), 400
 
         label = predict_sign(frame)
-        print("Prediction took", time.time() - start, "seconds")  # Add this
+
+        duration = time.time() - start
+        print(f"✅ Prediction completed in {duration:.2f} seconds")
+
+        # Log memory usage after processing
+        mem_after = process.memory_info().rss / 1024**2
+        print(f"🧠 Memory after processing: {mem_after:.2f} MB")
+
         return jsonify({"prediction": label})
 
     except Exception as e:
+        print("❌ Exception during prediction:", str(e))
         return jsonify({"error": str(e)}), 500
-
+    
 
 # Render uses its own port via $PORT
 if __name__ == "__main__":
