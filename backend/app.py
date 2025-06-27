@@ -6,6 +6,7 @@ import numpy as np
 import base64
 import tensorflow as tf
 import os
+import time
 
 # Load environment variables
 load_dotenv()
@@ -44,9 +45,12 @@ def predict_sign(img_array):
 def health_check():
     return jsonify({"status": "API is running"})
 
+
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
+        start = time.time()
+
         data = request.json.get("image")
         if not data:
             return jsonify({"error": "No image data provided"}), 400
@@ -60,6 +64,8 @@ def predict():
             return jsonify({"error": "Failed to decode image"}), 400
 
         label = predict_sign(frame)
+        
+        print("Prediction took", time.time() - start, "seconds")
         return jsonify({"prediction": label})
 
     except Exception as e:
