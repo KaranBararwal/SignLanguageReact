@@ -12,6 +12,8 @@ CORS(app)  # Enable CORS for all routes
 
 # Load model
 MODEL_PATH = "asl_model.keras"
+if os.path.exists(MODEL_PATH):
+    print(f"Loading model from {MODEL_PATH}")
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(f"Model file not found at path: {MODEL_PATH}")
 model = tf.keras.models.load_model(MODEL_PATH)
